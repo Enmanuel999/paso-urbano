@@ -1,0 +1,21 @@
+{
+  "name": "paso-urbano",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tienda universitaria de zapatos: microservicios y arquitectura hexagonal",
+  "scripts": {
+    "start": "node --env-file=.env src/main.js",
+    "start:catalog": "node --env-file=.env src/catalog-service/main.js",
+    "start:orders": "node --env-file=.env src/orders-service/main.js",
+    "start:users": "node --env-file=.env src/users-service/main.js",
+    "start:gateway": "node --env-file=.env src/gateway-main.js",
+    "start:all": "node --env-file=.env src/main.js"
+  },
+  "engines": {
+    "node": ">=22.9"
+  },
+  "type": "module",
+  "dependencies": {
+    "mysql2": "^3.24.5"
+  }
+}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f7f7f3" />
+  <meta name="description" content="Encuentra tus próximos zapatos favoritos en Paso Urbano." />
+  <title>Paso Urbano — Camina a tu ritmo</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="announcement">Envío gratis en compras superiores a $350.000 <span>·</span> Cambios fáciles por 30 días</div>
+  <header class="site-header">
+    <a class="brand" href="#inicio" aria-label="Paso Urbano, inicio"><span class="brand-mark">P</span><span>PASO<span class="brand-light">URBANO</span></span></a>
+    <nav class="main-nav" aria-label="Navegación principal"><a class="active" href="#coleccion">Tienda</a><a href="#coleccion" data-category-link="Deportivo">Deportivos</a><a href="#coleccion" data-category-link="Casual">Casuales</a><a href="#nosotros">Nosotros</a></nav>
+    <div class="header-actions"><button id="account-button" class="icon-button account-button" aria-label="Mi cuenta"><span class="outline-icon">♙</span><span class="account-label">Mi cuenta</span></button><button id="cart-button" class="icon-button cart-button" aria-label="Abrir carrito"><span class="outline-icon">▱</span><span class="cart-label">Bolsa</span><span class="cart-count" id="cart-count">0</span></button><button id="menu-button" class="menu-button" aria-label="Abrir menú">☰</button></div>
+  </header>
+  <main id="inicio">
+    <section class="hero">
+      <div class="hero-copy"><p class="eyebrow"><span class="eyebrow-line"></span> NUEVA TEMPORADA · 2026</p><h1>Camina<br />a tu <em>ritmo.</em></h1><p class="hero-description">Zapatos que acompañan cada versión de ti. Encuentra el par que cuenta tu historia.</p><a class="button button-dark" href="#coleccion">Explorar colección <span aria-hidden="true">↗</span></a><div class="hero-footnote"><span class="tiny-stars">★★★★★</span><span>4.9/5 · Más de 2.400 pasos felices</span></div></div>
+      <div class="hero-art" role="img" aria-label="Selección de zapatos deportivos de la nueva temporada"><div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div><div class="hero-sun"></div><div class="hero-shoe">👟</div><div class="hero-spark spark-one">✳</div><div class="hero-spark spark-two">✦</div><div class="hero-caption"><span>01 / 04</span><span class="caption-divider"></span><span>Movimiento natural</span></div><div class="hero-tag"><span class="tag-dot"></span> NUEVA COLECCIÓN</div></div>
+    </section>
+    <section class="benefits" aria-label="Ventajas de comprar en Paso Urbano"><div><span class="benefit-icon">↗</span><span><b>Envío gratis</b><small>Desde $350.000</small></span></div><div><span class="benefit-icon">⟳</span><span><b>Cambios fáciles</b><small>Hasta 30 días</small></span></div><div><span class="benefit-icon">♡</span><span><b>Compra segura</b><small>Pago protegido</small></span></div><div><span class="benefit-icon">✳</span><span><b>Hechos para ti</b><small>Comodidad real</small></span></div></section>
+    <section id="coleccion" class="collection section-wrap"><div class="section-heading"><div><p class="eyebrow"><span class="eyebrow-line"></span> HECHOS PARA MOVERTE</p><h2>Encuentra tu <em>par.</em></h2></div><a class="text-link desktop-link" href="#coleccion">Ver toda la colección <span>↗</span></a></div>
+      <div class="collection-tools"><div class="category-tabs" role="group" aria-label="Filtrar por categoría"><button class="filter-tab selected" data-category="">Todos <span>08</span></button><button class="filter-tab" data-category="Urbano">Urbano</button><button class="filter-tab" data-category="Deportivo">Deportivo</button><button class="filter-tab" data-category="Casual">Casual</button><button class="filter-tab" data-category="Outdoor">Outdoor</button></div><div class="filter-controls"><label class="search-box"><span aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Buscar zapatos" aria-label="Buscar zapatos" /></label><label class="size-filter"><span>Talla</span><select id="size-filter" aria-label="Filtrar por talla"><option value="">Todas</option><option>35</option><option>36</option><option>37</option><option>38</option><option>39</option><option>40</option><option>41</option><option>42</option></select></label></div></div>
+      <div id="catalog-status" class="catalog-status" aria-live="polite"></div><div id="product-grid" class="product-grid"></div><div id="empty-state" class="empty-state hidden"><span>◌</span><h3>No encontramos ese par</h3><p>Prueba otra búsqueda o cambia los filtros.</p><button id="clear-filters" class="text-link">Limpiar filtros</button></div>
+      <div class="mobile-all"><a class="button button-outline" href="#coleccion">Ver colección completa <span>↗</span></a></div>
+    </section>
+    <section class="story" id="nosotros"><div class="story-art"><div class="story-circle"></div><span class="story-shoe">👟</span><span class="story-stamp">PASO<br />A PASO<br /><b>COLOMBIA</b></span></div><div class="story-copy"><p class="eyebrow"><span class="eyebrow-line"></span> NUESTRO MANIFIESTO</p><h2>Más que llegar.<br /><em>Disfrutar el camino.</em></h2><p>Creemos que cada paso merece sentirse bien. Elegimos materiales cómodos, diseños versátiles y detalles que te siguen el ritmo, desde el primer café hasta el último plan.</p><a class="text-link" href="#coleccion">Conoce la colección <span>↗</span></a></div></section>
+    <section class="newsletter"><div><p class="eyebrow">UN PASO ADELANTE</p><h2>Buenas cosas<br />vienen en camino.</h2><p>Suscríbete y recibe novedades, lanzamientos y un 10% en tu primera compra.</p></div><form id="newsletter-form" class="newsletter-form"><label for="newsletter-email">Tu correo electrónico</label><div class="newsletter-input"><input id="newsletter-email" type="email" placeholder="hola@correo.com" required /><button type="submit" aria-label="Suscribirme">→</button></div><small>Al suscribirte aceptas nuestra política de privacidad.</small></form><span class="newsletter-spark">✳</span></section>
+  </main>
+  <footer class="site-footer"><div class="footer-top"><a class="brand brand-footer" href="#inicio"><span class="brand-mark">P</span><span>PASO<span class="brand-light">URBANO</span></span></a><p>Haz que cada paso cuente.</p><div class="socials"><a href="#inicio" aria-label="Instagram">ig</a><a href="#inicio" aria-label="TikTok">tk</a><a href="#inicio" aria-label="Facebook">f</a></div></div><div class="footer-bottom"><span>© 2026 Paso Urbano. Hecho para moverte.</span><span>Colombia · COP $</span><span><a href="#nosotros">Privacidad</a><a href="#nosotros">Ayuda</a></span></div></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="modal-root"></div>
+</body>
+</html>
