@@ -11,7 +11,7 @@ Tienda web universitaria de zapatos, con microservicios, arquitectura hexagonal 
 ## Configurar MySQL con Workbench
 
 1. Abre MySQL Workbench y conéctate a tu servidor local **MySQL80**.
-2. Si aún no creaste las bases, abre `database/mysql-schema.sql` en Workbench y ejecuta el script completo con el botón del rayo. Se crean tres esquemas: `paso_catalog`, `paso_orders` y `paso_users`, con tablas, zapatos de ejemplo y almacenamiento de bolsas. Si ya habías ejecutado una versión anterior del esquema, ejecuta `database/mysql-cart-migration.sql` para agregar las tablas de bolsa.
+2. Si aún no creaste las bases, abre `database/mysql-schema.sql` en Workbench y ejecuta el script completo con el botón del rayo. Se crean tres esquemas: `paso_catalog`, `paso_orders` y `paso_users`, con tablas, zapatos de ejemplo y almacenamiento de bolsas. Si ya habías ejecutado una versión anterior, ejecuta `database/mysql-cart-migration.sql` para agregar las tablas de bolsa y `database/mysql-shoe-images-migration.sql` para ampliar los campos de imagen y actualizar zapatos y bolsas existentes. Las fotos locales se sirven desde `public/images/shoes/`.
 3. Copia `.env.example` como `.env`. Escribe la contraseña local de MySQL en `MYSQL_PASSWORD` (no la compartas ni agregues el archivo `.env` al repositorio). Si tu cuenta tiene otro usuario o puerto, actualiza también esos valores.
 4. En PowerShell, desde esta carpeta, inicia la app. El comando inicia cada microservicio y el Gateway como procesos Node independientes:
 
@@ -50,6 +50,8 @@ El navegador habla con el API Gateway. Pedidos consulta Catálogo por HTTP para 
 ## Arquitectura hexagonal
 
 Cada servicio separa `domain/` (entidades/reglas), `application/` (casos de uso y puertos) y `adapters/` (HTTP y MySQL). Los casos de uso dependen de contratos de repositorio y las reglas de dominio no dependen de MySQL ni del servidor HTTP. El adaptador MySQL implementa el puerto de salida; los servidores HTTP traducen solicitudes a casos de uso. En Catálogo y Pedidos, las reglas de precio, talla, stock y totales están en entidades/casos de uso.
+
+Los principios de Código Limpio y SOLID también están aplicados en módulos del frontend y del servicio Pedidos. Consulta [`docs/clean-code-solid.md`](docs/clean-code-solid.md) para ver cada principio con los archivos donde se refleja.
 
 ## Usabilidad aplicada
 

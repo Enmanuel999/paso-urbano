@@ -1,40 +1,83 @@
 import { Cart } from '../domain/Cart.js';
 import { Order } from '../domain/Order.js';
 
-export function createOrderUseCases(repository, catalogUrl) {
-  async function currentCatalogItem(productId, size, quantity) {
-    const count = Cart.assertQuantity(quantity);
-    const response = await fetch(`${catalogUrl}/products/${encodeURIComponent(productId)}`);
-    if (!response.ok) throw new Error('Uno de los productos ya no está disponible.');
-    const product = await response.json();
-    const variant = product.variants.find((entry) => entry.size === String(size));
-    if (!variant) throw new Error(`La talla ${size} no está disponible.`);
-    if (Number(variant.stock) < count) throw new Error(`Solo quedan ${variant.stock} unidades de ${product.name}, talla ${size}.`);
-    return { productId: product.id, name: product.name, brand: product.brand, image: product.image, size: variant.size, quantity: count, price: Number(product.price), unitPrice: Number(product.price) };
+function createVerifiedCartItem(product, productId, size, quantity) {
+  const count = Cart.assertQuantity(quantity);
+  if (!product) throw new Error('Uno de los productos ya no está disponible.');
+
+  const variant = product.variants.find((entry) => entry.size === String(size));
+  if (!variant) throw new Error(`La talla ${size} no está disponible.`);
+  if (Number(variant.stock) < count) {
+    throw new Error(`Solo quedan ${variant.stock} unidades de ${product.name}, talla ${size}.`);
   }
+
   return {
-    getCart(cartId) { Cart.assertId(cartId); return repository.getCart(cartId); },
+    productId: product.id || productId,
+    name: product.name,
+    brand: product.brand,
+    image: product.image,
+    size: variant.size,
+    quantity: count,
+    price: Number(product.price),
+    unitPrice: Number(product.price),
+  };
+}
+
+export function createCartUseCases({ cartRepository, catalogClient }) {
+  async function verifyCartItem(input) {
+    const product = await catalogClient.getProduct(input.productId);
+    return createVerifiedCartItem(product, input.productId, input.size, input.quantity);
+  }
+
+  return {
+    getCart(cartId) {
+      Cart.assertId(cartId);
+      return cartRepository.getCart(cartId);
+    },
     async setCartItem(cartId, input) {
       Cart.assertId(cartId);
-      const item = await currentCatalogItem(input.productId, input.size, input.quantity);
-      return repository.setCartItem(cartId, item);
+      const item = await verifyCartItem(input);
+      return cartRepository.setCartItem(cartId, item);
     },
-    removeCartItem(cartId, productId, size) { Cart.assertId(cartId); return repository.removeCartItem(cartId, productId, size); },
+    removeCartItem(cartId, productId, size) {
+      Cart.assertId(cartId);
+      return cartRepository.removeCartItem(cartId, productId, size);
+    },
+  };
+}
+
+export function createOrderUseCases({ cartRepository, orderRepository, catalogClient }) {
+  async function verifyCartItems(items) {
+    const verifiedItems = [];
+    for (const item of items) {
+      const product = await catalogClient.getProduct(item.productId);
+      verifiedItems.push(createVerifiedCartItem(product, item.productId, item.size, item.quantity));
+    }
+    return verifiedItems;
+  }
+
+  return {
     async createOrder(input) {
       const { customerName, customerEmail, cartId } = input;
-      Order.validateCustomer(customerName, customerEmail); Cart.assertId(cartId);
-      const cart = await repository.getCart(cartId);
+      Order.validateCustomer(customerName, customerEmail);
+      Cart.assertId(cartId);
+
+      const cart = await cartRepository.getCart(cartId);
       if (!cart.items.length) throw new Error('Agrega productos al carrito antes de comprar.');
-      const verified = [];
-      for (const item of cart.items) verified.push(await currentCatalogItem(item.productId, item.size, item.quantity));
-      const reservation = await fetch(`${catalogUrl}/reserve`, {
-        method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ items: verified.map(({ productId, size, quantity }) => ({ productId, size, quantity })) }),
+
+      const items = await verifyCartItems(cart.items);
+      await catalogClient.reserveStock(
+        items.map(({ productId, size, quantity }) => ({ productId, size, quantity })),
+      );
+      return orderRepository.create({
+        cartId,
+        customerName: customerName.trim(),
+        customerEmail: customerEmail.trim().toLowerCase(),
+        items,
       });
-      const result = await reservation.json();
-      if (!reservation.ok) throw new Error(result.error || 'No se pudo reservar el inventario.');
-      return repository.create({ cartId, customerName: customerName.trim(), customerEmail: customerEmail.trim().toLowerCase(), items: verified });
     },
-    getOrder: (id) => repository.findById(id),
+    getOrder(id) {
+      return orderRepository.findById(id);
+    },
   };
 }

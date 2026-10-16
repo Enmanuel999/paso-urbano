@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS products (
   category VARCHAR(40) NOT NULL,
   description VARCHAR(500) NOT NULL,
   price INT UNSIGNED NOT NULL,
-  image VARCHAR(16) NOT NULL,
+  image VARCHAR(255) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS variants (
@@ -23,14 +23,14 @@ CREATE TABLE IF NOT EXISTS variants (
   CONSTRAINT fk_variants_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 INSERT IGNORE INTO products (id,name,brand,category,description,price,image) VALUES
-('urbano-nova','Nova Street','Norte','Urbano','Silueta ligera para recorrer la ciudad con comodidad.',289900,'👟'),
-('retro-court','Court Retro','Cancha','Casual','Un clásico limpio con detalles en contraste y suela flexible.',319900,'👟'),
-('trail-pulse','Pulse Trail','Cumbre','Deportivo','Agarre confiable y amortiguación suave para tus rutas.',429900,'🥾'),
-('daily-cloud','Daily Cloud','Norte','Deportivo','Malla respirable y pisada liviana para todos los días.',359900,'👟'),
-('canvas-sun','Canvas Sun','Lona Viva','Casual','Lona resistente con un perfil versátil para combinar.',199900,'👟'),
-('urban-echo','Urban Echo','Cancha','Urbano','Capas suaves y una suela urbana con buen soporte.',339900,'👟'),
-('terra-hike','Terra Hike','Cumbre','Outdoor','Protección ligera para escapadas y senderos de fin de semana.',489900,'🥾'),
-('bloom-step','Bloom Step','Lona Viva','Casual','Un toque de color con plantilla acolchada y flexible.',249900,'👟');
+('urbano-nova','Nova Street','Norte','Urbano','Silueta ligera para recorrer la ciudad con comodidad.',289900,'/images/shoes/nova-street.jpg'),
+('retro-court','Court Retro','Cancha','Casual','Un clásico limpio con detalles en contraste y suela flexible.',319900,'/images/shoes/court-retro.jpg'),
+('trail-pulse','Pulse Trail','Cumbre','Deportivo','Agarre confiable y amortiguación suave para tus rutas.',429900,'/images/shoes/pulse-trail.jpg'),
+('daily-cloud','Daily Cloud','Norte','Deportivo','Malla respirable y pisada liviana para todos los días.',359900,'/images/shoes/daily-cloud.jpg'),
+('canvas-sun','Canvas Sun','Lona Viva','Casual','Lona resistente con un perfil versátil para combinar.',199900,'/images/shoes/canvas-sun.jpg'),
+('urban-echo','Urban Echo','Cancha','Urbano','Capas suaves y una suela urbana con buen soporte.',339900,'/images/shoes/urban-echo.jpg'),
+('terra-hike','Terra Hike','Cumbre','Outdoor','Protección ligera para escapadas y senderos de fin de semana.',489900,'/images/shoes/terra-hike.jpg'),
+('bloom-step','Bloom Step','Lona Viva','Casual','Un toque de color con plantilla acolchada y flexible.',249900,'/images/shoes/bloom-step.png');
 INSERT IGNORE INTO variants (product_id,size,stock) VALUES
 ('urbano-nova','36',4),('urbano-nova','37',6),('urbano-nova','38',5),('urbano-nova','39',3),('urbano-nova','40',2),
 ('retro-court','36',3),('retro-court','37',4),('retro-court','38',5),('retro-court','39',4),('retro-court','40',2),
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS cart_items (
   product_id VARCHAR(60) NOT NULL,
   name VARCHAR(120) NOT NULL,
   brand VARCHAR(80) NOT NULL,
-  image VARCHAR(16) NOT NULL,
+  image VARCHAR(255) NOT NULL,
   size VARCHAR(8) NOT NULL,
   quantity TINYINT UNSIGNED NOT NULL,
   unit_price INT UNSIGNED NOT NULL,
