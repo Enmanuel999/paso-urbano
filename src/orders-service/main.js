@@ -11,7 +11,10 @@ try {
   await pool.query('SELECT id FROM orders LIMIT 0');
   const cartRepository = createCartRepository(pool);
   const orderRepository = createOrderRepository(pool);
-  const catalogClient = createHttpCatalogClient(process.env.CATALOG_SERVICE_URL || 'http://127.0.0.1:3101');
+  const catalogClient = createHttpCatalogClient(
+    process.env.CATALOG_SERVICE_URL || 'http://127.0.0.1:3101',
+    process.env.CATALOG_INTERNAL_TOKEN || '',
+  );
   const useCases = {
     ...createCartUseCases({ cartRepository, catalogClient }),
     ...createOrderUseCases({ cartRepository, orderRepository, catalogClient }),

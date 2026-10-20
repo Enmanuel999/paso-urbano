@@ -16,7 +16,6 @@ const mime = {
 };
 const routes = [
   { prefix: '/api/products', target: process.env.CATALOG_SERVICE_URL || 'http://127.0.0.1:3101', base: '/products' },
-  { prefix: '/api/catalog', target: process.env.CATALOG_SERVICE_URL || 'http://127.0.0.1:3101', base: '' },
   { prefix: '/api/users', target: process.env.USERS_SERVICE_URL || 'http://127.0.0.1:3103', base: '' },
   { prefix: '/api/orders', target: process.env.ORDERS_SERVICE_URL || 'http://127.0.0.1:3102', base: '/orders' },
 ];

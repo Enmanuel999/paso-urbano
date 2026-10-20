@@ -1,9 +1,10 @@
 import { CatalogClient } from '../application/ports/CatalogClient.js';
 
 export class HttpCatalogClient extends CatalogClient {
-  constructor(baseUrl, fetchImplementation = globalThis.fetch) {
+  constructor(baseUrl, internalToken = '', fetchImplementation = globalThis.fetch) {
     super();
     this.baseUrl = baseUrl.replace(/\/$/, '');
+    this.internalToken = internalToken;
     this.fetchImplementation = fetchImplementation;
   }
 
@@ -19,15 +20,26 @@ export class HttpCatalogClient extends CatalogClient {
   async reserveStock(items) {
     const response = await this.fetchImplementation(`${this.baseUrl}/reserve`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', 'x-internal-token': this.internalToken },
       body: JSON.stringify({ items }),
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(result.error || 'No se pudo reservar el inventario.');
     return result;
   }
+
+  async releaseStock(items) {
+    const response = await this.fetchImplementation(`${this.baseUrl}/release`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-internal-token': this.internalToken },
+      body: JSON.stringify({ items }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || 'No se pudo devolver el inventario.');
+    return result;
+  }
 }
 
-export function createHttpCatalogClient(baseUrl) {
-  return new HttpCatalogClient(baseUrl);
+export function createHttpCatalogClient(baseUrl, internalToken) {
+  return new HttpCatalogClient(baseUrl, internalToken);
 }

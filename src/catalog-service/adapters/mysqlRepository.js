@@ -35,6 +35,33 @@ export class MySqlCatalogRepository extends CatalogRepository {
     } catch (error) { await connection.rollback(); throw error; }
     finally { connection.release(); }
   }
+
+  async release(items) {
+    const connection = await this.pool.getConnection();
+    try {
+      await connection.beginTransaction();
+      for (const item of items) {
+        const quantity = Number(item.quantity);
+        if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10) throw new Error('Cantidad inválida.');
+        const [rows] = await connection.execute(
+          'SELECT stock FROM variants WHERE product_id = ? AND size = ? FOR UPDATE',
+          [item.productId, String(item.size)],
+        );
+        if (!rows.length) throw new Error(`No se encontró la variante de talla ${item.size} para devolver al inventario.`);
+        await connection.execute(
+          'UPDATE variants SET stock = stock + ? WHERE product_id = ? AND size = ?',
+          [quantity, item.productId, String(item.size)],
+        );
+      }
+      await connection.commit();
+      return { released: true };
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 export function createCatalogRepository(pool) { return new MySqlCatalogRepository(pool); }

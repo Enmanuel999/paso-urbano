@@ -7,3 +7,7 @@ node_modules/
 *.sqlite3
 *.db
 legacy-sqlite/data/
+
+# Temporary files from the image generation CLI
+output/imagegen/.tmp/
+output/imagegen/.python-packages/

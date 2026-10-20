@@ -35,7 +35,23 @@ export class MySqlOrderRepository extends OrderRepository {
       connection.release();
     }
 
-    return this.findById(id);
+    return {
+      id,
+      customer_name: customerName,
+      customer_email: customerEmail,
+      total,
+      status: 'Confirmado',
+      payment_status: 'Aprobado (simulado)',
+      created_at: new Date().toISOString(),
+      items: items.map((item) => ({
+        productId: item.productId,
+        name: item.name,
+        brand: item.brand || '',
+        size: String(item.size),
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unitPrice),
+      })),
+    };
   }
 
   async findById(id) {

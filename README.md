@@ -12,7 +12,7 @@ Tienda web universitaria de zapatos, con microservicios, arquitectura hexagonal 
 
 1. Abre MySQL Workbench y conéctate a tu servidor local **MySQL80**.
 2. Si aún no creaste las bases, abre `database/mysql-schema.sql` en Workbench y ejecuta el script completo con el botón del rayo. Se crean tres esquemas: `paso_catalog`, `paso_orders` y `paso_users`, con tablas, modelos conocidos de Nike/Jordan y adidas, tallas, inventario y almacenamiento de bolsas. Si ya habías ejecutado una versión anterior, ejecuta las migraciones necesarias: `database/mysql-cart-migration.sql`, `database/mysql-shoe-images-migration.sql`, `database/mysql-product-gallery-migration.sql` y, al final, `database/mysql-famous-models-migration.sql` para reemplazar los productos de muestra por los modelos nuevos y actualizar sus fotografías y galerías. Las fotos locales se sirven desde `public/images/shoes/`; sus referencias y créditos están en `docs/shoe-images.md`.
-3. Copia `.env.example` como `.env`. Escribe la contraseña local de MySQL en `MYSQL_PASSWORD` (no la compartas ni agregues el archivo `.env` al repositorio). Si tu cuenta tiene otro usuario o puerto, actualiza también esos valores.
+3. Copia `.env.example` como `.env`. Escribe la contraseña local de MySQL en `MYSQL_PASSWORD` y reemplaza `CATALOG_INTERNAL_TOKEN` con un valor privado largo (no compartas ni agregues `.env` al repositorio). Si tu cuenta tiene otro usuario o puerto, actualiza también esos valores.
 4. En PowerShell, desde esta carpeta, inicia la app. El comando inicia cada microservicio y el Gateway como procesos Node independientes:
 
 ```powershell
@@ -45,7 +45,7 @@ ORDER BY c.updated_at DESC;
 | Usuarios | 3103 | Registro, inicio de sesión y sesiones | `paso_users` |
 | API Gateway + web | 3000 | Interfaz y enrutamiento REST | — |
 
-El navegador habla con el API Gateway. Pedidos consulta Catálogo por HTTP para obtener precios vigentes y reservar unidades. Cada microservicio posee su propio esquema y se ejecuta como proceso Node independiente; `npm start` los coordina para desarrollo. `mysql2` conecta Node.js con MySQL; no se instala nada desde Workbench para la app. Cada navegador conserva un identificador de bolsa y el servicio de Pedidos persiste sus líneas en MySQL al agregar, cambiar cantidad o quitar un zapato. Cada servicio expone `GET /health` en su puerto para indicar que el proceso responde.
+El navegador habla con el API Gateway. Pedidos consulta Catálogo por HTTP para validar precios y reservar unidades. Las operaciones internas de inventario requieren `CATALOG_INTERNAL_TOKEN` y no se publican a través del Gateway. Si falla la escritura del pedido después de reservar el stock, Pedidos solicita al Catálogo que libere la reserva como acción compensatoria. Cada microservicio posee su propio esquema y se ejecuta como proceso Node independiente; `npm start` los coordina para desarrollo. `mysql2` conecta Node.js con MySQL; no se instala nada desde Workbench para la app. Cada navegador conserva un identificador de bolsa y el servicio de Pedidos persiste sus líneas en MySQL al agregar, cambiar cantidad o quitar un zapato. Cada servicio expone `GET /health` en su puerto para indicar que el proceso responde.
 
 ## Arquitectura hexagonal
 
@@ -63,14 +63,13 @@ Los principios de Código Limpio y SOLID también están aplicados en módulos d
 - Ley de Fitts: botones grandes y cómodos para móvil.
 - Accesibilidad básica: etiquetas, foco de teclado, `aria-live` y diseño adaptable.
 
-La relación entre principios y elementos concretos de la interfaz está en [`docs/usability-audit.md`](docs/usability-audit.md). Es una inspección del diseño, no una prueba de usabilidad con participantes ni una certificación de accesibilidad.
+La relación entre principios y elementos concretos de la interfaz está en [`docs/usability-audit.md`](docs/usability-audit.md). Es una inspección del diseño, no una prueba de usabilidad con participantes ni una certificación de accesibilidad. Los favoritos se guardan en el navegador bajo `paso-favorites`, separado de la bolsa sincronizada con MySQL; no añaden artículos a la compra.
 
 ## Endpoints principales
 
 ```text
 GET  /api/products?search=&category=&size=
 GET  /api/products/:id
-POST /api/catalog/reserve
 POST /api/users/register
 POST /api/users/login
 GET  /api/users/me
@@ -80,6 +79,8 @@ DELETE /api/orders/carts/:cartId/items/:productId/:size
 POST /api/orders
 GET  /api/orders/:id
 ```
+
+Las rutas de reserva y liberación de inventario (`POST /reserve` y `POST /release`) son internas del servicio Catálogo y requieren el token compartido; el Gateway no las expone al navegador.
 
 ## Datos SQLite anteriores
 

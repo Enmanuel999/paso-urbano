@@ -66,15 +66,23 @@ export function createOrderUseCases({ cartRepository, orderRepository, catalogCl
       if (!cart.items.length) throw new Error('Agrega productos al carrito antes de comprar.');
 
       const items = await verifyCartItems(cart.items);
-      await catalogClient.reserveStock(
-        items.map(({ productId, size, quantity }) => ({ productId, size, quantity })),
-      );
-      return orderRepository.create({
-        cartId,
-        customerName: customerName.trim(),
-        customerEmail: customerEmail.trim().toLowerCase(),
-        items,
-      });
+      const reservation = items.map(({ productId, size, quantity }) => ({ productId, size, quantity }));
+      await catalogClient.reserveStock(reservation);
+      try {
+        return await orderRepository.create({
+          cartId,
+          customerName: customerName.trim(),
+          customerEmail: customerEmail.trim().toLowerCase(),
+          items,
+        });
+      } catch (error) {
+        try {
+          await catalogClient.releaseStock(reservation);
+        } catch {
+          throw new Error('No se pudo guardar el pedido y el inventario reservado requiere revisión. Contacta al administrador.');
+        }
+        throw error;
+      }
     },
     getOrder(id) {
       return orderRepository.findById(id);
