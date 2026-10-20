@@ -5,8 +5,11 @@ export class MySqlCatalogRepository extends CatalogRepository {
   constructor(pool) { super(); this.pool = pool; }
   async toProduct(row) {
     if (!row) return null;
-    const [variants] = await this.pool.execute('SELECT size, stock FROM variants WHERE product_id = ? ORDER BY size', [row.id]);
-    return new Product({ ...row, price: Number(row.price), variants: variants.map((variant) => ({ ...variant, stock: Number(variant.stock) })) });
+    const [[variants], [gallery]] = await Promise.all([
+      this.pool.execute('SELECT size, stock FROM variants WHERE product_id = ? ORDER BY size', [row.id]),
+      this.pool.execute('SELECT image_path, alt_text FROM product_images WHERE product_id = ? ORDER BY position', [row.id]),
+    ]);
+    return new Product({ ...row, price: Number(row.price), images: gallery.map(({ image_path, alt_text }) => ({ src: image_path, alt: alt_text })), variants: variants.map((variant) => ({ ...variant, stock: Number(variant.stock) })) });
   }
   async list({ search = '', category = '', size = '' } = {}) {
     const [rows] = await this.pool.execute(`SELECT DISTINCT p.* FROM products p LEFT JOIN variants v ON v.product_id=p.id

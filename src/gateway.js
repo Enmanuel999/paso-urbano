@@ -12,6 +12,7 @@ const mime = {
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
   '.webp': 'image/webp',
+  '.svg': 'image/svg+xml',
 };
 const routes = [
   { prefix: '/api/products', target: process.env.CATALOG_SERVICE_URL || 'http://127.0.0.1:3101', base: '/products' },

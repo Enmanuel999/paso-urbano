@@ -1,16 +1,16 @@
-# Fotografías del catálogo
+# Modelos y fotografías del catálogo
 
-Las fotografías se sirven desde `public/images/shoes/` para que la tienda no dependa del CDN durante su ejecución. Se descargaron de Pexels, donde cada página indica que la foto es gratuita bajo la licencia de Pexels. Se conservan los créditos de los fotógrafos y enlaces a las páginas fuente.
+El catálogo de demostración presenta modelos comerciales conocidos y dos fotografías por ficha. Los archivos se sirven localmente desde `public/images/shoes/`; por eso el catálogo no depende de que los sitios de origen estén disponibles mientras corre la aplicación.
 
-| Archivo | Producto | Autor | Fuente |
+| Modelo | Marca | Referencia de producto | Fotos locales |
 | --- | --- | --- | --- |
-| `nova-street.jpg` | Nova Street | Melvin Buezo | [Pexels 2529147](https://www.pexels.com/photo/close-up-photo-of-sneakers-2529147/) |
-| `court-retro.jpg` | Court Retro | Hipkicks | [Pexels 6748330](https://www.pexels.com/photo/shoes-on-a-white-background-6748330/) |
-| `pulse-trail.jpg` | Pulse Trail | Luis Quintero | [Pexels 14174469](https://www.pexels.com/photo/rubber-shoes-on-white-surface-14174469/) |
-| `daily-cloud.jpg` | Daily Cloud | Hipkicks | [Pexels 6776080](https://www.pexels.com/photo/close-up-shot-of-sneakers-6776080/) |
-| `canvas-sun.jpg` | Canvas Sun | Sneep Crew | [Pexels 12740485](https://www.pexels.com/photo/a-pair-of-beautiful-sneakers-on-the-floor-12740485/) |
-| `urban-echo.jpg` | Urban Echo | Hipkicks | [Pexels 6777913](https://www.pexels.com/photo/pair-of-sneakers-on-white-surface-6777913/) |
-| `terra-hike.jpg` | Terra Hike | Sneep Crew | [Pexels 12730139](https://www.pexels.com/photo/a-pair-of-sneakers-12730139/) |
-| `bloom-step.png` | Bloom Step | sole heaven | [Pexels 20298290](https://www.pexels.com/photo/sneakers-on-white-background-20298290/) |
+| Air Force 1 '07 | Nike | [CW2288-111](https://www.nike.com/gb/t/air-force-1-07-shoes-GjGXSP/CW2288-111) | `nike-air-force-1.jpg`, `nike-air-force-1-detail.jpg` |
+| Air Max 90 | Nike | [IX7926-001](https://www.nike.com/t/air-max-90-mens-shoes-bAZ6AeHT) | `nike-air-max-90.jpg`, `nike-air-max-90-detail.jpg` |
+| Dunk Low Retro | Nike | [DD1391-102](https://www.nike.com/t/dunk-low-retro-mens-shoes-kh3m8S/DD1391-102) | `nike-dunk-low.jpg`, `nike-dunk-low-detail.jpg` |
+| Air Jordan 1 Low | Jordan | [553558-043](https://www.goat.com/sneakers/air-jordan-1-low-orca-553558-043) | `air-jordan-1-low.png`, `air-jordan-1-low-detail.jpg` |
+| Samba OG | adidas | [B75807](https://www.adidas.co.za/B75807.html) | `adidas-samba-og.jpg`, `adidas-samba-og-detail.png` |
+| Superstar | adidas | [EG4958](https://chicagocitysports.com/products/mens-adidas-originals-superstar-shoes-white-black-eg4958) | `adidas-superstar.jpg`, `adidas-superstar-detail.jpg` |
+| Gazelle Indoor | adidas | [JI2061](https://www.adidas.co.za/JI2061.html) | `adidas-gazelle-indoor.png`, `adidas-gazelle-indoor-detail.jpg` |
+| Campus 00s | adidas | [HQ8708](https://www.adidas.co.za/HQ8708.html) | `adidas-campus-00s.jpg`, `adidas-campus-00s-detail.jpg` |
 
-Las imágenes son fotografías ilustrativas del estilo de cada producto y no representan necesariamente el modelo comercial ficticio exacto ni implican patrocinio de las marcas que aparezcan.
+Las fotografías pertenecen a Nike/Jordan, adidas o a los comercios enlazados. Este catálogo es una muestra universitaria sin fines comerciales, no está patrocinada por las marcas y no otorga una licencia para reutilizar las fotos. Antes de publicar o comercializar la tienda, reemplaza los archivos por imágenes propias o con licencia adecuada.

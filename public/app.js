@@ -73,7 +73,9 @@ function openProduct(id) {
   const product = state.products.find((item) => item.id === id);
   if (!product) return;
   const options = product.variants.filter((variant) => variant.stock > 0).map((variant) => `<option value="${variant.size}">${variant.size} · ${variant.stock} disponibles</option>`).join('');
-  $('#modal-root').innerHTML = `<div class="modal-backdrop" data-dismiss="true"><section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><h2 id="modal-title">Tu próximo par</h2><button class="close-modal" data-dismiss="true" aria-label="Cerrar">×</button></div><div class="product-visual" style="--bubble:${palettes[state.products.indexOf(product) % palettes.length]};height:220px"><img class="product-photo" src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" decoding="async"></div><div class="product-info"><div class="product-meta"><span>${escapeHtml(product.brand)} · ${escapeHtml(product.category)}</span><span>★ 4.9</span></div><h3 class="product-name" style="font-size:22px">${escapeHtml(product.name)}</h3><p class="auth-copy">${escapeHtml(product.description)}</p><div class="product-price" style="font-size:15px;margin:15px 0">${money(product.price)}</div><label class="field"><span>Elige tu talla</span><select id="product-size">${options}</select></label><button id="add-selected" class="button button-dark full-button">Agregar a la bolsa <span>↗</span></button><p class="secure-note">Envío gratis desde $350.000 · Cambios fáciles hasta 30 días.</p></div></section></div>`;
+  const images = [{ src: product.image, alt: `${product.name} — foto principal` }, ...(product.images || [])];
+  const thumbnails = images.map((image, index) => `<button class="gallery-thumb${index === 0 ? ' selected' : ''}" type="button" data-gallery-src="${escapeHtml(image.src)}" data-gallery-alt="${escapeHtml(image.alt)}" aria-label="Mostrar foto ${index + 1} de ${images.length} de ${escapeHtml(product.name)}" aria-pressed="${index === 0}"><img src="${escapeHtml(image.src)}" alt="" loading="lazy" decoding="async"></button>`).join('');
+  $('#modal-root').innerHTML = `<div class="modal-backdrop" data-dismiss="true"><section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><h2 id="modal-title">Tu próximo par</h2><button class="close-modal" data-dismiss="true" aria-label="Cerrar">×</button></div><div class="product-visual product-detail-visual" style="--bubble:${palettes[state.products.indexOf(product) % palettes.length]}"><img id="product-gallery-main" class="product-photo" src="${escapeHtml(images[0].src)}" alt="${escapeHtml(images[0].alt)}" decoding="async"></div><div class="product-gallery-thumbnails" role="group" aria-label="Galería de fotos de ${escapeHtml(product.name)}">${thumbnails}</div><div class="product-info"><div class="product-meta"><span>${escapeHtml(product.brand)} · ${escapeHtml(product.category)}</span><span>★ 4.9</span></div><h3 class="product-name" style="font-size:22px">${escapeHtml(product.name)}</h3><p class="auth-copy">${escapeHtml(product.description)}</p><div class="product-price" style="font-size:15px;margin:15px 0">${money(product.price)}</div><label class="field"><span>Elige tu talla</span><select id="product-size">${options}</select></label><button id="add-selected" class="button button-dark full-button">Agregar a la bolsa <span>↗</span></button><p class="secure-note">Modelo comercial real · fotografías de referencia. Envío gratis desde $350.000 · Cambios fáciles hasta 30 días.</p></div></section></div>`;
   $('#add-selected').addEventListener('click', async () => { const size = $('#product-size').value; if (!size) return showToast('No hay tallas disponibles por ahora.'); await addToCart(product, size); closeModal(); });
 }
 function closeModal() { $('#modal-root').innerHTML = ''; }
@@ -139,6 +141,15 @@ document.querySelectorAll('[data-category-link]').forEach((link) => link.addEven
 $('#cart-button').addEventListener('click', async () => { await cartReady; openCart(); }); $('#account-button').addEventListener('click', openAccount);
 $('#menu-button').addEventListener('click', () => $('.main-nav').classList.toggle('open'));
 $('#modal-root').addEventListener('click', (event) => {
+  const galleryThumb = event.target.closest('[data-gallery-src]');
+  if (galleryThumb) {
+    const mainImage = $('#product-gallery-main');
+    const galleryButtons = document.querySelectorAll('.gallery-thumb');
+    mainImage.src = galleryThumb.dataset.gallerySrc;
+    mainImage.alt = galleryThumb.dataset.galleryAlt;
+    galleryButtons.forEach((button) => { const selected = button === galleryThumb; button.classList.toggle('selected', selected); button.setAttribute('aria-pressed', String(selected)); });
+    return;
+  }
   if (event.target.matches('[data-dismiss]')) { closeModal(); return; }
   const authTab = event.target.closest('[data-auth-mode]'); if (authTab) { state.authMode = authTab.dataset.authMode; renderAccount(); return; }
   const qty = event.target.closest('[data-qty]');
