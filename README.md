@@ -1,6 +1,6 @@
 # Paso Urbano 👟
 
-Tienda web universitaria de zapatos, con microservicios, arquitectura hexagonal y MySQL. Incluye catálogo con tallas/inventario, cuentas, bolsa, pedidos y pago de demostración.
+Tienda web universitaria de zapatos, con microservicios, arquitectura hexagonal, Express y MySQL. Incluye catálogo con tallas/inventario, cuentas, bolsa, pedidos y pago de demostración.
 
 ## Requisitos
 
@@ -20,6 +20,10 @@ npm start
 ```
 
 5. Abre <http://localhost:3000>.
+
+### Panel de administración
+
+En una instalación existente, ejecuta una sola vez database/mysql-admin-panel-migration.sql desde Workbench. Después, agrega ADMIN_USERNAME y ADMIN_PASSWORD al archivo local .env (usuario de 3–40 caracteres y contraseña de al menos 16 caracteres), guarda y reinicia npm start. El servicio de Usuarios crea o actualiza un único administrador con contraseña derivada mediante PBKDF2; no existe una clave predeterminada. Abre <http://localhost:3000/admin.html> para entrar. El panel permite crear y editar productos, precios, fotos, tallas/stock, retirar y reactivar artículos. Retirar conserva el producto para las referencias de pedidos históricos. Las peticiones administrativas requieren una sesión de 8 horas; cinco intentos fallidos desde una misma IP bloquean nuevos intentos durante 15 minutos.
 
 Para inspeccionar la base, en Workbench actualiza el panel **Schemas** y expande cada esquema. Las bolsas activas aparecen en `paso_orders.carts` y `paso_orders.cart_items`; al confirmar una compra, sus artículos pasan a `paso_orders.order_items` y la bolsa queda vacía. El inventario se actualiza en `paso_catalog.variants`; las cuentas quedan en `paso_users.users` y `paso_users.sessions`.
 
@@ -45,7 +49,7 @@ ORDER BY c.updated_at DESC;
 | Usuarios | 3103 | Registro, inicio de sesión y sesiones | `paso_users` |
 | API Gateway + web | 3000 | Interfaz y enrutamiento REST | — |
 
-El navegador habla con el API Gateway. Pedidos consulta Catálogo por HTTP para validar precios y reservar unidades. Las operaciones internas de inventario requieren `CATALOG_INTERNAL_TOKEN` y no se publican a través del Gateway. Si falla la escritura del pedido después de reservar el stock, Pedidos solicita al Catálogo que libere la reserva como acción compensatoria. Cada microservicio posee su propio esquema y se ejecuta como proceso Node independiente; `npm start` los coordina para desarrollo. `mysql2` conecta Node.js con MySQL; no se instala nada desde Workbench para la app. Cada navegador conserva un identificador de bolsa y el servicio de Pedidos persiste sus líneas en MySQL al agregar, cambiar cantidad o quitar un zapato. Cada servicio expone `GET /health` en su puerto para indicar que el proceso responde.
+El navegador habla con el API Gateway. Pedidos consulta Catálogo por HTTP para validar precios y reservar unidades. Las operaciones internas de inventario requieren `CATALOG_INTERNAL_TOKEN` y no se publican a través del Gateway. Si falla la escritura del pedido después de reservar el stock, Pedidos solicita al Catálogo que libere la reserva como acción compensatoria. Cada microservicio posee su propio esquema y se ejecuta como proceso Node independiente; `npm start` los coordina para desarrollo. `Express` expone las rutas HTTP de los microservicios y el Gateway; los adaptadores HTTP traducen solicitudes a casos de uso. `mysql2` conecta Node.js con MySQL; no se instala nada desde Workbench para la app. Cada navegador conserva un identificador de bolsa y el servicio de Pedidos persiste sus líneas en MySQL al agregar, cambiar cantidad o quitar un zapato. Cada servicio expone `GET /health` en su puerto para indicar que el proceso responde.
 
 ## Arquitectura hexagonal
 
@@ -70,6 +74,13 @@ La relación entre principios y elementos concretos de la interfaz está en [`do
 ```text
 GET  /api/products?search=&category=&size=
 GET  /api/products/:id
+POST /api/users/admin/login
+GET  /api/users/admin/me
+POST /api/users/admin/logout
+GET  /api/admin/products
+POST /api/admin/products
+PUT  /api/admin/products/:id
+PATCH /api/admin/products/:id
 POST /api/users/register
 POST /api/users/login
 GET  /api/users/me
@@ -79,6 +90,8 @@ DELETE /api/orders/carts/:cartId/items/:productId/:size
 POST /api/orders
 GET  /api/orders/:id
 ```
+
+Las rutas administrativas de Catálogo requieren sesión válida y el Gateway añade el token interno solo después de verificarla; no se exponen secretos en el navegador.
 
 Las rutas de reserva y liberación de inventario (`POST /reserve` y `POST /release`) son internas del servicio Catálogo y requieren el token compartido; el Gateway no las expone al navegador.
 
