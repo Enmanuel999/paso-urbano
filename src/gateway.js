@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import express from 'express';
 import { createExpressApp, addJsonErrorHandler, addJsonNotFoundHandler } from './shared/expressApp.js';
 
+const clientBuildRoot = resolve('dist');
 const publicRoot = resolve('public');
 const routes = [
   { prefix: '/api/products', target: process.env.CATALOG_SERVICE_URL || 'http://127.0.0.1:3101', base: '/products' },
@@ -73,6 +74,9 @@ export function createGateway({ port = 3000 } = {}) {
     if (req.path.includes('..') || req.path.includes('\\')) return res.status(400).json({ error: 'Ruta inválida.' });
     next();
   });
+  app.use(express.static(clientBuildRoot, {
+    setHeaders(res) { res.setHeader('cache-control', 'no-cache'); },
+  }));
   app.use(express.static(publicRoot, {
     setHeaders(res) { res.setHeader('cache-control', 'no-cache'); },
   }));

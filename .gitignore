@@ -11,3 +11,8 @@ legacy-sqlite/data/
 # Temporary files from the image generation CLI
 output/imagegen/.tmp/
 output/imagegen/.python-packages/
+
+dist/
+
+tmp/
+output/imagegen/

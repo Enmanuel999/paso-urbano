@@ -14,7 +14,7 @@ Esta guía relaciona decisiones que ya están en el código con principios concr
 
 ## Capas del frontend
 
-- `public/app.js` conserva la interacción y el estado de la interfaz.
+- `client/src/App.jsx` conserva la interacción y el estado de la tienda mediante componentes React.
 - `public/modules/api/` agrupa la comunicación con el Gateway por área funcional, bajo una ruta que no interfiere con el prefijo REST `/api/`.
 - `public/modules/utils/formatters.js` contiene funciones reutilizables y sin dependencia del DOM.
 - El cliente HTTP acepta una implementación de `fetch` como dependencia para facilitar su sustitución.
@@ -22,3 +22,11 @@ Esta guía relaciona decisiones que ya están en el código con principios concr
 ## Límite de la refactorización
 
 Se mantuvieron las rutas REST y el formato de las respuestas para conservar el flujo existente. La revisión fue estática; no se ejecutaron pruebas automatizadas como parte de estos cambios. Conviene añadir pruebas unitarias de casos de uso con repositorios/clientes falsos antes de seguir ampliando el sistema.
+
+
+## Panel administrativo
+
+- **Responsabilidad única:** Admin/domain valida identidad; AdminRepository y su adaptador MySQL manejan persistencia y sesiones; casos de uso coordinan autenticación; Catálogo mantiene la lógica de productos/stock; Gateway comprueba sesión y enruta.
+- **Inversión de dependencias:** los casos de uso de administrador dependen del puerto AdminRepository; Catálogo depende del puerto CatalogRepository.
+- **Abierto/cerrado:** operaciones administrativas se incorporan como casos de uso y rutas específicas sin mover el dominio del catálogo al Gateway.
+- **Seguridad de credenciales:** contraseña con PBKDF2 y salt aleatorio; solo el hash SHA-256 del token de sesión se persiste; el secreto interno del catálogo permanece en el servidor.

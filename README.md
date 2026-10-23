@@ -1,6 +1,6 @@
 # Paso Urbano 👟
 
-Tienda web universitaria de zapatos, con microservicios, arquitectura hexagonal, Express y MySQL. Incluye catálogo con tallas/inventario, cuentas, bolsa, pedidos y pago de demostración.
+Tienda web universitaria de zapatos, con frontend React y Vite, microservicios, arquitectura hexagonal, Express y MySQL. Incluye catálogo con tallas/inventario, cuentas, bolsa, pedidos y pago de demostración.
 
 ## Requisitos
 
@@ -21,6 +21,8 @@ npm start
 
 5. Abre <http://localhost:3000>.
 
+Para trabajar la interfaz con recarga automática, en otra terminal ejecuta `npm run dev` y abre <http://localhost:5173>. El backend (`npm start`) debe seguir activo; Vite reenvía las peticiones `/api` al Gateway. El comando `npm start` compila React y sirve la versión lista para producción desde Express.
+
 ### Panel de administración
 
 En una instalación existente, ejecuta una sola vez database/mysql-admin-panel-migration.sql desde Workbench. Después, agrega ADMIN_USERNAME y ADMIN_PASSWORD al archivo local .env (usuario de 3–40 caracteres y contraseña de al menos 16 caracteres), guarda y reinicia npm start. El servicio de Usuarios crea o actualiza un único administrador con contraseña derivada mediante PBKDF2; no existe una clave predeterminada. Abre <http://localhost:3000/admin.html> para entrar. El panel permite crear y editar productos, precios, fotos, tallas/stock, retirar y reactivar artículos. Retirar conserva el producto para las referencias de pedidos históricos. Las peticiones administrativas requieren una sesión de 8 horas; cinco intentos fallidos desde una misma IP bloquean nuevos intentos durante 15 minutos.
@@ -39,6 +41,10 @@ FROM paso_orders.carts c
 JOIN paso_orders.cart_items ci ON ci.cart_id = c.cart_id
 ORDER BY c.updated_at DESC;
 ```
+
+## Frontend React
+
+La tienda principal está construida con React y Vite. `client/src/App.jsx` organiza la experiencia en componentes con estado declarativo; las llamadas reutilizan los módulos HTTP del Gateway en `/api`. El panel administrativo permanece como página independiente en `public/admin.html`.
 
 ## Microservicios
 
